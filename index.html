@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zenit</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="icon" href="logo.png" type="logo.png">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body class="dark-theme">
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-content">
+            <div class="logo-loading">
+                <img src="logo.png" alt="Zenit" class="logo-img" onerror="this.style.display='none'">
+                <span class="logo-text">ZENIT</span>
+            </div>
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+            </div>
+            <p class="loading-text">Conectando al repositorio...</p>
+            <div class="loading-status" id="loadingStatus">
+                <span class="status-indicator"></span>
+                <span class="status-text">Inicializando...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Netflix-style Interface -->
+    <div class="app-container hidden" id="appContainer">
+        <!-- Navigation Bar -->
+        <nav class="navbar" id="navbar">
+            <div class="nav-left">
+                <div class="logo">
+                    <img src="logo.png" alt="Zenit" class="logo-img" onerror="this.style.display='none'">
+                    <span class="logo-text">ZENIT</span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="#home" class="nav-link active" data-section="home">Inicio</a></li>
+                    <li><a href="#movies" class="nav-link" data-section="movies">Películas</a></li>
+                    <li><a href="#series" class="nav-link" data-section="series">Series</a></li>
+                    <li><a href="#my-list" class="nav-link" data-section="favorites">Mi Lista</a></li>
+                </ul>
+            </div>
+            <div class="nav-right">
+                <button class="theme-toggle" id="themeToggle">
+                    <span class="theme-icon">☀️</span>
+                </button>
+                <div class="search-container">
+                    <input type="text" class="search-input" id="globalSearch" placeholder="Buscar títulos...">
+                    <span class="search-icon">🔍</span>
+                </div>
+                <!-- Repo Status -->
+                <div class="repo-status" id="repoStatus">
+                    <span class="repo-indicator"></span>
+                    <span class="repo-text">Repo conectado</span>
+                </div>
+                <button class="refresh-btn" id="refreshBtn" title="Actualizar desde repositorio">🔄</button>
+                <button class="admin-btn" id="adminBtn">Admin</button>
+                <div class="profile-menu">
+                    <div class="profile-avatar">👤</div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Container -->
+        <main class="main-container">
+            <!-- Home Section -->
+            <section class="content-section active" id="homeSection">
+                <!-- Hero Banner -->
+                <div class="hero-banner" id="heroBanner">
+                    <div class="hero-background">
+                        <img src="" alt="" class="hero-bg-image" id="heroBgImage">
+                        <div class="hero-gradient"></div>
+                    </div>
+                    <div class="hero-content">
+                        <h1 class="hero-title" id="heroTitle">Bienvenido a Zenit</h1>
+                        <p class="hero-description" id="heroDescription">Tu plataforma de streaming personal</p>
+                        <div class="hero-buttons">
+                            <button class="play-btn" id="heroPlayBtn">▶ Reproducir</button>
+                            <button class="info-btn" id="heroInfoBtn">ℹ Más info</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Rows -->
+                <div class="content-rows">
+                    <div class="content-row">
+                        <h2 class="row-title">🔥 Tendencias</h2>
+                        <div class="movies-carousel" id="trendingCarousel"></div>
+                    </div>
+                    <div class="content-row">
+                        <h2 class="row-title">🎬 Películas Populares</h2>
+                        <div class="movies-carousel" id="moviesCarousel"></div>
+                    </div>
+                    <div class="content-row">
+                        <h2 class="row-title">📺 Series Recomendadas</h2>
+                        <div class="movies-carousel" id="seriesCarousel"></div>
+                    </div>
+                    <div class="content-row">
+                        <h2 class="row-title">🆕 Agregadas Recientemente</h2>
+                        <div class="movies-carousel" id="recentCarousel"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Movies Section -->
+            <section class="content-section" id="moviesSection">
+                <div class="section-header">
+                    <h1>Películas <span class="content-count" id="moviesContentCount">(0)</span></h1>
+                    <div class="section-filters">
+                        <select id="movieGenreFilter">
+                            <option value="">Todos los géneros</option>
+                        </select>
+                        <select id="movieYearFilter">
+                            <option value="">Todos los años</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="content-grid" id="moviesGrid"></div>
+            </section>
+
+            <!-- Series Section -->
+            <section class="content-section" id="seriesSection">
+                <div class="section-header">
+                    <h1>Series <span class="content-count" id="seriesContentCount">(0)</span></h1>
+                    <div class="section-filters">
+                        <select id="seriesGenreFilter">
+                            <option value="">Todos los géneros</option>
+                        </select>
+                        <select id="seriesYearFilter">
+                            <option value="">Todos los años</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="content-grid" id="seriesGrid"></div>
+            </section>
+
+            <!-- Favorites Section -->
+            <section class="content-section" id="favoritesSection">
+                <div class="section-header">
+                    <h1>Mi Lista</h1>
+                </div>
+                <div class="content-grid" id="favoritesGrid"></div>
+            </section>
+        </main>
+
+        <!-- Video Player Modal -->
+        <div class="player-modal hidden" id="playerModal">
+            <div class="player-container">
+                <button class="close-player" id="closePlayer">✕</button>
+                <div class="video-wrapper">
+                    <video id="videoPlayer" controls preload="auto">
+                        <source src="" type="video/mp4">
+                        Tu navegador no soporta reproducción de video.
+                    </video>
+                    <div class="video-overlay" id="videoOverlay">
+                        <div class="loading-spinner">
+                            <div class="spinner"></div>
+                            <p>Cargando video...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="player-info">
+                    <h2 id="playerTitle">Título del Video</h2>
+                    <p id="playerDescription">Descripción del contenido</p>
+                    <div class="player-server-info" id="playerServerInfo">
+                        <span class="server-badge">🔗 URL Directa</span>
+                        <span class="quality-badge">HD</span>
+                        <span class="language-badge">Español</span>
+                    </div>
+                </div>
+                <div class="player-controls">
+                    <div class="control-group">
+                        <label>Velocidad:</label>
+                        <select id="speedControl">
+                            <option value="0.5">0.5x</option>
+                            <option value="0.75">0.75x</option>
+                            <option value="1" selected>Normal</option>
+                            <option value="1.25">1.25x</option>
+                            <option value="1.5">1.5x</option>
+                            <option value="2">2x</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Calidad:</label>
+                        <select id="qualityControl">
+                            <option value="auto">Auto</option>
+                            <option value="1080p">1080p</option>
+                            <option value="720p">720p</option>
+                            <option value="480p">480p</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Detail Modal -->
+        <div class="detail-modal hidden" id="detailModal">
+            <div class="detail-container">
+                <button class="close-detail" id="closeDetail">✕</button>
+                <div class="detail-hero">
+                    <img src="" alt="" class="detail-backdrop" id="detailBackdrop">
+                    <div class="detail-gradient"></div>
+                    <div class="detail-content">
+                        <img src="" alt="" class="detail-poster" id="detailPoster">
+                        <div class="detail-info">
+                            <h1 id="detailTitle">Título</h1>
+                            <div class="detail-meta">
+                                <span id="detailYear">2024</span>
+                                <span id="detailGenre">Género</span>
+                                <span id="detailRating">★ 8.5</span>
+                            </div>
+                            <p id="detailDescription">Descripción del contenido...</p>
+                            <div class="detail-servers" id="detailServers"></div>
+                            <div class="detail-buttons">
+                                <button class="play-btn" id="detailPlayBtn">▶ Reproducir</button>
+                                <button class="add-list-btn" id="addToListBtn">+ Mi Lista</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-episodes hidden" id="detailEpisodes">
+                    <h3>Episodios</h3>
+                    <div class="episodes-container" id="episodesContainer"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Login Modal -->
+        <div class="modal hidden" id="adminLoginModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>🔐 Acceso Administrativo</h2>
+                    <button class="close-btn" id="closeLoginModal">✕</button>
+                </div>
+                <div class="modal-body">
+                    <form id="adminLoginForm">
+                        <div class="form-group">
+                            <input type="text" id="adminUsername" placeholder="Usuario" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" id="adminPassword" placeholder="Contraseña" required>
+                        </div>
+                        <button type="submit" class="submit-btn">Iniciar Sesión</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Panel Modal -->
+        <div class="modal hidden" id="adminModal">
+            <div class="modal-content admin-modal">
+                <div class="modal-header">
+                    <h2>📊 Panel de Administración</h2>
+                    <button class="close-btn" id="closeAdminModal">✕</button>
+                </div>
+                <div class="modal-body">
+                    <div class="admin-tabs">
+                        <button class="admin-tab active" data-tab="repo-info">📊 Repositorio</button>
+                        <button class="admin-tab" data-tab="add-movie">➕ Agregar Película</button>
+                        <button class="admin-tab" data-tab="add-series">📺 Agregar Serie</button>
+                        <button class="admin-tab" data-tab="manage">🗂️ Gestionar Contenido</button>
+                    </div>
+
+                    <!-- Repository Info Panel -->
+                    <div class="admin-panel active" id="repoinfoPanel">
+                        <div class="repo-info-card">
+                            <h3>📁 Información del Repositorio</h3>
+                            <div class="repo-stats">
+                                <div class="stat-item">
+                                    <strong>URL:</strong>
+                                    <span>https://raw.githubusercontent.com/soportecrisdev/pelis_gen/refs/heads/main/gen</span>
+                                </div>
+                                <div class="stat-item">
+                                    <strong>Estado:</strong>
+                                    <span class="status-connected">🟢 Conectado</span>
+                                </div>
+                                <div class="stat-item">
+                                    <strong>Última actualización:</strong>
+                                    <span id="lastUpdate">--</span>
+                                </div>
+                            </div>
+                            <button class="refresh-repo-btn" id="refreshRepoBtn">🔄 Actualizar desde Repositorio</button>
+                        </div>
+                        
+                        <div class="content-stats-grid">
+                            <div class="stat-card">
+                                <h3 id="totalMoviesCount">0</h3>
+                                <p>Películas</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3 id="totalSeriesCount">0</h3>
+                                <p>Series</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3 id="totalEpisodesCount">0</h3>
+                                <p>Episodios</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3 id="totalServersCount">0</h3>
+                                <p>Servidores</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add Movie Panel -->
+                    <div class="admin-panel" id="addmoviePanel">
+                        <form id="movieForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Título de la Película *</label>
+                                    <input type="text" id="movieTitle" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Año</label>
+                                    <input type="number" id="movieYear" min="1900" max="2030">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Descripción</label>
+                                <textarea id="movieDescription" rows="3"></textarea>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Género</label>
+                                    <input type="text" id="movieGenre" placeholder="Ej: Acción, Drama">
+                                </div>
+                                <div class="form-group">
+                                    <label>Servidor *</label>
+                                    <select id="movieServer" required>
+                                        <option value="">Seleccionar servidor</option>
+                                        <option value="Google Drive">Google Drive</option>
+                                        <option value="YouTube">YouTube</option>
+                                        <option value="Facebook">Facebook</option>
+                                        <option value="MEGA">MEGA</option>
+                                        <option value="Streamtape">Streamtape</option>
+                                        <option value="Dropbox">Dropbox</option>
+                                        <option value="Firebase">Firebase</option>
+                                        <option value="1Fichier">1Fichier</option>
+                                        <option value="Stape">Stape</option>
+                                        <option value="Zippyshare">Zippyshare</option>
+                                        <option value="Directa">URL Directa</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>URL del Video *</label>
+                                <input type="url" id="movieUrl" required>
+                                <div class="server-help" id="movieServerHelp">
+                                    Selecciona un servidor para ver el formato de URL correcto
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Calidad</label>
+                                    <select id="movieQuality">
+                                        <option value="HD">HD</option>
+                                        <option value="Full HD">Full HD</option>
+                                        <option value="4K">4K</option>
+                                        <option value="SD">SD</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Idioma</label>
+                                    <select id="movieLanguage">
+                                        <option value="Español">Español</option>
+                                        <option value="Inglés">Inglés</option>
+                                        <option value="Subtitulado">Subtitulado</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Imagen de Portada</label>
+                                    <input type="url" id="moviePoster" placeholder="URL de la imagen">
+                                </div>
+                                <div class="form-group">
+                                    <label>Imagen de Fondo</label>
+                                    <input type="url" id="movieBackdrop" placeholder="URL del fondo">
+                                </div>
+                            </div>
+                            <button type="submit" class="submit-btn">➕ Agregar Película</button>
+                        </form>
+                    </div>
+
+                    <!-- Add Series Panel -->
+                    <div class="admin-panel" id="addseriesPanel">
+                        <form id="seriesForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Título de la Serie *</label>
+                                    <input type="text" id="seriesTitle" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Año</label>
+                                    <input type="number" id="seriesYear" min="1900" max="2030">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Descripción</label>
+                                <textarea id="seriesDescription" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Género</label>
+                                <input type="text" id="seriesGenre" placeholder="Ej: Drama, Comedia">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Imagen de Portada</label>
+                                    <input type="url" id="seriesPoster" placeholder="URL de la imagen">
+                                </div>
+                                <div class="form-group">
+                                    <label>Imagen de Fondo</label>
+                                    <input type="url" id="seriesBackdrop" placeholder="URL del fondo">
+                                </div>
+                            </div>
+                            <button type="submit" class="submit-btn">📺 Crear Serie</button>
+                        </form>
+
+                        <!-- Episodes Management -->
+                        <div class="episodes-management hidden" id="episodesManagement">
+                            <h3>Agregar Episodios</h3>
+                            <form id="episodeForm">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Temporada *</label>
+                                        <input type="number" id="episodeSeason" min="1" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Episodio *</label>
+                                        <input type="number" id="episodeNumber" min="1" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Título del Episodio *</label>
+                                    <input type="text" id="episodeTitle" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Descripción</label>
+                                    <textarea id="episodeDescription" rows="2"></textarea>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Servidor *</label>
+                                        <select id="episodeServer" required>
+                                            <option value="">Seleccionar servidor</option>
+                                            <option value="Google Drive">Google Drive</option>
+                                            <option value="YouTube">YouTube</option>
+                                            <option value="Facebook">Facebook</option>
+                                            <option value="MEGA">MEGA</option>
+                                            <option value="Streamtape">Streamtape</option>
+                                            <option value="Dropbox">Dropbox</option>
+                                            <option value="Firebase">Firebase</option>
+                                            <option value="1Fichier">1Fichier</option>
+                                            <option value="Stape">Stape</option>
+                                            <option value="Zippyshare">Zippyshare</option>
+                                            <option value="Directa">URL Directa</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>URL del Video *</label>
+                                        <input type="url" id="episodeUrl" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Calidad</label>
+                                        <select id="episodeQuality">
+                                            <option value="HD">HD</option>
+                                            <option value="Full HD">Full HD</option>
+                                            <option value="4K">4K</option>
+                                            <option value="SD">SD</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Idioma</label>
+                                        <select id="episodeLanguage">
+                                            <option value="Español">Español</option>
+                                            <option value="Inglés">Inglés</option>
+                                            <option value="Subtitulado">Subtitulado</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="server-help" id="episodeServerHelp">
+                                    Selecciona un servidor para ver el formato correcto
+                                </div>
+                                <button type="submit" class="submit-btn">📺 Agregar Episodio</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Manage Content Panel -->
+                    <div class="admin-panel" id="managePanel">
+                        <div class="manage-content">
+                            <div class="manage-tabs">
+                                <button class="manage-tab active" data-tab="movies">Películas</button>
+                                <button class="manage-tab" data-tab="series">Series</button>
+                            </div>
+                            <div class="manage-list" id="manageList"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications Container -->
+        <div class="notifications-container" id="notificationsContainer"></div>
+    </div>
+
+    <script src="video-player.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
